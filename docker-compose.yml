@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  backend-A:
+    image: nginxdemos/hello:plain-text
+    hostname: backend-A
+    container_name: backend-A
+    environment:
+      TERM: xterm-color
+    networks:
+      - ebpf
+  backend-B:
+    image: nginxdemos/hello:plain-text
+    hostname: backend-B
+    container_name: backend-B
+    environment:
+      TERM: xterm-color
+    networks:
+      - ebpf
+  client:
+    image: nginxdemos/hello:plain-text
+    hostname: client
+    container_name: client
+    environment:
+      TERM: xterm-color
+    networks:
+      - ebpf
+networks:
+  ebpf:
+    external: true

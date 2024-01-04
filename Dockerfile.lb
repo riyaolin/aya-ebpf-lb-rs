@@ -1,0 +1,20 @@
+FROM ubuntu:jammy
+RUN apt-get update \
+	&& apt-get install -y \
+	wget libelf-dev libpcap-dev build-essential make linux-tools-common curl
+RUN wget https://apt.llvm.org/llvm.sh
+RUN chmod +x llvm.sh
+RUN apt-get update && apt install -y lsb-release wget software-properties-common gnupg
+RUN yes '' | ./llvm.sh
+RUN apt-get update && apt-get install -y libpolly-17-dev libzstd-dev
+RUN rm -rf /var/lib/apt/lists/*
+
+# Install Rust
+RUN curl https://sh.rustup.rs -sSf > /tmp/rustup-init.sh \
+    && chmod +x /tmp/rustup-init.sh \
+    && sh /tmp/rustup-init.sh -y \
+    && rm -rf /tmp/rustup-init.sh
+RUN /root/.cargo/bin/rustup toolchain install nightly --component rust-src
+RUN export LLVM_SYS_160_PREFIX=/usr/lib/llvm-17
+ENV PATH "/usr/lib/llvm-17/bin:$PATH:~/.cargo/bin"
+RUN /root/.cargo/bin/cargo install --no-default-features bpf-linker
