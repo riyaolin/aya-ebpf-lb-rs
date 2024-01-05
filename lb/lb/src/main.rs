@@ -38,7 +38,7 @@ async fn main() -> Result<(), anyhow::Error> {
         warn!("failed to initialize eBPF logger: {}", e);
     }
     let program: &mut Xdp =
-        bpf.program_mut("xdp_firewall").unwrap().try_into()?;
+        bpf.program_mut("xdp_lb").unwrap().try_into()?;
     program.load()?;
     program.attach(&opt.iface, XdpFlags::default())
         .context("failed to attach the XDP program with default flags - try changing XdpFlags::default() to XdpFlags::SKB_MODE")?;
