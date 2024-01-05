@@ -15,7 +15,7 @@ use network_types::{
 
 // constants for demo
 const CLIENT: u32 = 0xAC130003;
-const _CLIENT_E: u8 = 3;
+const CLIENT_E: u8 = 3;
 const LB: u32 = 0xAC130005;
 const LB_E: u8 = 5;
 const BACKEND_A: u32 = 0xAC130002;
