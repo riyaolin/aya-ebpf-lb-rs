@@ -4,6 +4,11 @@ container_name=lb
 network_name=ebpf
 image_name_tag=ubuntu-ebpf-lb:dev
 docker_file=Dockerfile.lb
+is_intel=$(uname -a | grep x86)
+platform=linux/arm64/v8
+if [ -n "${is_intel}" ]; then
+  platform=linux/amd64
+fi
 
 has_container() {
     [ $( docker ps -a | grep $container_name | wc -l ) -gt 0 ]
@@ -17,7 +22,7 @@ start_container() {
 start_new_container() {
 	docker network inspect ${network_name} >/dev/null 2>&1 || \
     docker network create --driver bridge ${network_name}
-	docker run -it -d --network ${network_name} -v $(pwd)/lb:/code --platform=linux/arm64/v8 --privileged --env TERM=xterm-color --name ${container_name} -h ${container_name} ${image_name_tag}
+	docker run -it -d --network ${network_name} -v $(pwd)/lb:/code --platform=$platform --privileged --env TERM=xterm-color --name ${container_name} -h ${container_name} ${image_name_tag}
 }
 
 do_start_or_run()
@@ -39,7 +44,7 @@ run_shell() {
 }
 
 build_image() {
-	docker build --platform=linux/arm64/v8 -t ${image_name_tag} -f ${docker_file} .
+	docker build --platform=$platform -t ${image_name_tag} -f ${docker_file} .
 }
 
 remove_image() {
