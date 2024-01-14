@@ -1,7 +1,8 @@
 FROM ubuntu:jammy
 RUN apt-get update \
 	&& apt-get install -y \
-	wget libelf-dev libpcap-dev build-essential make linux-tools-common curl
+	wget libelf-dev libpcap-dev build-essential \
+    make linux-tools-common curl libbpf-dev ethtool
 RUN wget https://apt.llvm.org/llvm.sh
 RUN chmod +x llvm.sh
 RUN apt-get update && apt install -y lsb-release wget software-properties-common gnupg
@@ -10,10 +11,9 @@ RUN apt-get update && apt-get install -y libpolly-17-dev libzstd-dev
 RUN rm -rf /var/lib/apt/lists/*
 
 # Install Rust
-RUN curl https://sh.rustup.rs -sSf > /tmp/rustup-init.sh \
-    && chmod +x /tmp/rustup-init.sh \
-    && sh /tmp/rustup-init.sh -y \
-    && rm -rf /tmp/rustup-init.sh
+ENV RUST_VERSION=stable
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=$RUST_VERSION
+# nightly toolchain
 RUN /root/.cargo/bin/rustup toolchain install nightly --component rust-src
 RUN export LLVM_SYS_160_PREFIX=/usr/lib/llvm-17
 ENV PATH "/usr/lib/llvm-17/bin:$PATH:~/.cargo/bin"

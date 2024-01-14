@@ -111,7 +111,7 @@ fn try_xdp_lb(ctx: XdpContext) -> Result<u32, ()> {
             (*ethhdr).dst_addr[5] = BACKEND_A_E;
             info!(&ctx, "Destination now changed to: {:i}", (*ipv4hdr).dst_addr);
         }
-    } else {
+    } else if source_addr == BACKEND_A {
         info!(&ctx, "From backend host");
         unsafe {
             // (*ipv4hdr).dst_addr = u32::from_be(CLIENT);
@@ -119,6 +119,9 @@ fn try_xdp_lb(ctx: XdpContext) -> Result<u32, ()> {
             (*ethhdr).dst_addr[5] = CLIENT_E;
             info!(&ctx, "Destination now changed to: {:i}", (*ipv4hdr).dst_addr);
         }
+    } else {
+        info!(&ctx, "From unrelated hosts in the network");
+        return Ok(xdp_action::XDP_PASS)
     }
     
     unsafe {
